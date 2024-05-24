@@ -8,5 +8,6 @@ import (
 func main() {
 	config.Init()
 	config.Appconfig = config.GetConfig()
+	config.InitMongoDB()
 	router.Init()
 }

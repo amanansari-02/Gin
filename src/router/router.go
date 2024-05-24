@@ -16,8 +16,7 @@ func NewRouter() *gin.Engine {
 	router := gin.New()
 	resource := router.Group("/api")
 	{
-		resource.GET("/GetData", controller.GetData)
-		resource.GET("/GetNameAndAge", controller.GetNameAndAge)
+		resource.POST("/CreateUser", controller.CreateUser)
 	}
 	return router
 }
