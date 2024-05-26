@@ -43,3 +43,35 @@ func CreateUser(c *gin.Context) {
 		"data":    data,
 	}) // success message
 }
+
+func GetUsers(c *gin.Context) {
+
+	client := config.GetMongoClient()                         // Take a database
+	collection := client.Database("ginDB").Collection("user") // Database name and collection name
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var users []model.GetData
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	if err = cursor.All(ctx, &users); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if len(users) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": "Not found"})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "All users data",
+			"data": users,
+		})
+	}
+}
